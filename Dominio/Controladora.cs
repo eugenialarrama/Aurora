@@ -2,6 +2,66 @@
 {
     public class Controladora
     {
-       
+
+        private static List<Cliente> aListaClientes = new List<Cliente>();
+
+        #region Clientes
+
+        public List<Cliente> ListarClientes()
+        {
+            return aListaClientes;
+        }
+
+        public Cliente BuscarCliente(int pId)
+        {
+            foreach (Cliente unCliente in aListaClientes)
+            {
+                if (unCliente.Id == pId)
+                {
+                    return unCliente;
+                }
+            }
+            return null;
+        }
+
+        public bool AltaCliente(Cliente pCliente)
+        {
+            Cliente ComparoCliente = BuscarCliente(pCliente.Id);
+            if (ComparoCliente == null)
+            {
+                aListaClientes.Add(pCliente);
+                return true;
+            }
+            return false;
+        }
+
+        public bool ModificarCliente(int pId, string pTipo, string pNombre, string pDocumento, string pTelefono, string pEmail,string pDireccion)
+        {
+            Cliente ClienteAModificar = BuscarCliente(pId);
+            if (ClienteAModificar != null)
+            {
+                ClienteAModificar.Tipo = pTipo;
+                ClienteAModificar.Nombre = pNombre;
+                ClienteAModificar.Documento = pDocumento;
+                ClienteAModificar.Telefono = pTelefono;
+                ClienteAModificar.Email = pEmail;
+                ClienteAModificar.Direccion = pDireccion;
+                return true;
+            }
+            return false;
+        }
+
+        public bool DesactivarCliente(int pId)
+        {
+            Cliente ClienteADesactivar = BuscarCliente(pId);
+            if (ClienteADesactivar != null)
+            {
+                ClienteADesactivar.Activo = false;
+                return true;
+            }
+            return false;
+        }
+
+        #endregion
     }
 }

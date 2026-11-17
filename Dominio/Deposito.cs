@@ -1,7 +1,5 @@
 ﻿namespace Aurora.Dominio
 {
-    public class Deposito
-    {
         public class Deposito
         {
             private int aId;
@@ -20,4 +18,4 @@
             }
         }
     }
-}
+
