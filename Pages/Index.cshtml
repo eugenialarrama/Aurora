@@ -1,10 +1,39 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Inicio";
 }
-
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">AURORA</h1>
+    <p>Alquiler de Equipamiento Audiovisual</p>
+</div>
+<hr />
+<div class="row text-center">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Clientes</h5>
+                <p class="card-text">Registrar, consultar, modificar y desactivar clientes.</p>
+                <a class="btn btn-primary" asp-page="/PageCliente/Listar">Ir a Clientes</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Depósitos</h5>
+                <p class="card-text">Administrar los depósitos donde se guarda el equipamiento.</p>
+                <a class="btn btn-primary" asp-page="/PageDeposito/Listar">Ir a Depósitos</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Tipos de equipamiento</h5>
+                <p class="card-text">Administrar los tipos de equipamiento y sus precios.</p>
+                <a class="btn btn-primary" asp-page="/PageTipoEquipamiento/Listar">Ir a Tipos de equipamiento</a>
+            </div>
+        </div>
+    </div>
 </div>

@@ -1,0 +1,66 @@
+﻿@page
+@model Aurora.Pages.PageTipoEquipamiento.ModificarModel
+@{
+    ViewData["Title"] = "Modificar tipo de equipamiento";
+}
+<div class="text-left">
+    <h1 class="display-4 text-center">Modificar un Tipo de Equipamiento</h1>
+    <hr />
+    <form method="post">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="id">ID:</label>
+                    <input class="form-control" type="text" name="id" id="id" value="@Model.tipo.Id" readonly />
+                </div>
+                <div class="form-group">
+                    <label for="nombre">Nombre:</label>
+                    <input class="form-control" type="text" name="nombre" id="nombre" value="@Model.tipo.Nombre" />
+                </div>
+                <div class="form-group">
+                    <label for="descripcion">Descripción:</label>
+                    <input class="form-control" type="text" name="descripcion" id="descripcion" value="@Model.tipo.Descripcion" />
+                </div>
+                <div class="form-group">
+                    <label for="caracteristicas">Características:</label>
+                    <input class="form-control" type="text" name="caracteristicas" id="caracteristicas" value="@Model.tipo.Caracteristicas" />
+                </div>
+                <div class="form-group">
+                    <label for="precio">Precio de alquiler:</label>
+                    <input class="form-control" type="text" name="precio" id="precio" value="@Model.tipo.PrecioAlquiler" />
+                </div>
+                <div class="form-group">
+                    <label for="idDeposito">Depósito:</label>
+                    <select class="form-control" name="idDeposito" id="idDeposito">
+                        @foreach (Dominio.Deposito unDeposito in Model.Depositos)
+                        {
+                            if (unDeposito.Id == Model.tipo.Deposito.Id)
+                            {
+                                <option value="@unDeposito.Id" selected>@unDeposito.Nombre</option>
+                            }
+                            else
+                            {
+                                <option value="@unDeposito.Id">@unDeposito.Nombre</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="mt-2">
+                <button class="btn btn-success" type="submit" asp-page-handler="Modificar">Modificar</button>
+                <a class="btn btn-warning" asp-page="./Listar">Volver</a>
+            </div>
+        </div>
+    </form>
+
+    @if (!string.IsNullOrEmpty(Model.Mensaje))
+    {
+        <br />
+        <div class="alert alert-danger" role="alert">
+            @Model.Mensaje
+        </div>
+    }
+</div>

@@ -1,4 +1,6 @@
-﻿namespace Aurora.Dominio
+﻿using System.Runtime.Intrinsics.X86;
+
+namespace Aurora.Dominio
 {
     public class Controladora
     {
@@ -100,12 +102,19 @@
             Deposito DepositoAEliminar = BuscarDeposito(pId);
             if (DepositoAEliminar != null)
             {
+                foreach (TipoEquipamiento unTipo in aListaTiposEquipamiento) // Verifica si hay algún tipo de equipamiento asociado al depósito antes de eliminarlo
+                //Antes de borrar, recorre los tipos.Si alguno usa ese depósito, devuelve false y no lo elimina
+                {
+                    if (unTipo.Deposito.Id == pId)
+                    {
+                        return false;
+                    }
+                }
                 aListaDepositos.Remove(DepositoAEliminar);
                 return true;
             }
             return false;
         }
-
         public bool ModificarDeposito(int pId, string pNombre, string pDireccion)
         {
             Deposito DepositoAModificar = BuscarDeposito(pId);
@@ -119,5 +128,62 @@
         }
         #endregion
 
+        #region TiposEquipamiento
+
+        public List<TipoEquipamiento> ListarTiposEquipamiento()
+        {
+            return aListaTiposEquipamiento;
+        }
+
+        public TipoEquipamiento BuscarTipoEquipamiento(int pId)
+        {
+            foreach (TipoEquipamiento unTipo in aListaTiposEquipamiento)
+            {
+                if (unTipo.Id == pId)
+                {
+                    return unTipo;
+                }
+            }
+            return null;
+        }
+
+        public bool AltaTipoEquipamiento(TipoEquipamiento pTipo)
+        {
+            TipoEquipamiento ComparoTipo = BuscarTipoEquipamiento(pTipo.Id);
+            if (ComparoTipo == null)
+            {
+                aListaTiposEquipamiento.Add(pTipo);
+                return true;
+            }
+            return false;
+        }
+
+        public bool BajaTipoEquipamiento(int pId)
+        {
+            TipoEquipamiento TipoAEliminar = BuscarTipoEquipamiento(pId);
+            if (TipoAEliminar != null)
+            {
+                aListaTiposEquipamiento.Remove(TipoAEliminar);
+                return true;
+            }
+            return false;
+        }
+
+        public bool ModificarTipoEquipamiento(int pId, string pNombre, string pDescripcion, string pCaracteristicas, decimal pPrecioAlquiler, Deposito pDeposito)
+        {
+            TipoEquipamiento TipoAModificar = BuscarTipoEquipamiento(pId);
+            if (TipoAModificar != null)
+            {
+                TipoAModificar.Nombre = pNombre;
+                TipoAModificar.Descripcion = pDescripcion;
+                TipoAModificar.Caracteristicas = pCaracteristicas;
+                TipoAModificar.PrecioAlquiler = pPrecioAlquiler;
+                TipoAModificar.Deposito = pDeposito;
+                return true;
+            }
+            return false;
+        }
+
+        #endregion
     }
 }

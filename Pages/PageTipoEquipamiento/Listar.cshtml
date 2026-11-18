@@ -1,0 +1,56 @@
+﻿@page
+@model Aurora.Pages.PageTipoEquipamiento.ListarModel
+@{
+    ViewData["Title"] = "Tipos de equipamiento";
+}
+<div>
+    <h1 class="display-4 text-center">Tipos de Equipamiento</h1>
+    <div class="row">
+        <div class="col text-right">
+            <a class="btn btn-success" asp-page="./Alta">Agregar</a>
+        </div>
+    </div>
+    <table class="table text-center">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Características</th>
+                <th>Precio de alquiler</th>
+                <th>Depósito</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Tipos != null && Model.Tipos.Any())
+            {
+                @foreach (Dominio.TipoEquipamiento unTipo in Model.Tipos)
+                {
+                    <tr>
+                        <td>@unTipo.Id</td>
+                        <td>@unTipo.Nombre</td>
+                        <td>@unTipo.Descripcion</td>
+                        <td>@unTipo.Caracteristicas</td>
+                        <td>@unTipo.PrecioAlquiler</td>
+                        <td>@unTipo.Deposito.Nombre</td>
+                        <td>
+                            <div>
+                                <a class="btn btn-primary" asp-page="./Modificar" asp-route-id="@unTipo.Id">Modificar</a>
+                                <a class="btn btn-danger" asp-page="./Eliminar" asp-route-id="@unTipo.Id">Eliminar</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" class="text-center">
+                        No hay Tipos de Equipamiento ingresados
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

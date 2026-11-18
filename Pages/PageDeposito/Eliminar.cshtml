@@ -1,7 +1,7 @@
 ﻿@page
 @model Aurora.Pages.PageDeposito.EliminarModel
 @{
-    ViewData["Title"] = "Eliminar Depósito";
+    ViewData["Title"] = "Eliminar depósito";
 }
 <div class="text left">
     <h1 class="display-4 text-center">Eliminar Depósito</h1>
@@ -37,4 +37,11 @@
             </div>
         </div>
     </form>
+    @if (!string.IsNullOrEmpty(Model.Mensaje))
+    {
+        <br />
+        <div class="alert alert-danger" role="alert">
+            @Model.Mensaje
+        </div>
+    }
 </div>
