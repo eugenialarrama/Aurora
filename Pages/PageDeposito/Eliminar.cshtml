@@ -1,0 +1,40 @@
+﻿@page
+@model Aurora.Pages.PageDeposito.EliminarModel
+@{
+    ViewData["Title"] = "Eliminar Depósito";
+}
+<div class="text left">
+    <h1 class="display-4 text-center">Eliminar Depósito</h1>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.deposito.Id)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.deposito.Id)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.deposito.Nombre)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.deposito.Nombre)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.deposito.Direccion)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.deposito.Direccion)
+        </dd>
+    </dl>
+    <hr />
+
+    <form method="post">
+        <input type="hidden" name="id" value="@Model.deposito.Id" />
+        <div class="row">
+            <div class="mt-2">
+                <button type="submit" asp-page-handler="Eliminar" class="btn btn-danger">Eliminar</button>
+                <a class="btn btn-warning" asp-page="./Listar">Volver</a>
+            </div>
+        </div>
+    </form>
+</div>

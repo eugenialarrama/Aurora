@@ -4,6 +4,8 @@
     {
 
         private static List<Cliente> aListaClientes = new List<Cliente>();
+        private static List<Deposito> aListaDepositos = new List<Deposito>();
+        private static List<TipoEquipamiento> aListaTiposEquipamiento = new List<TipoEquipamiento>();
 
         #region Clientes
 
@@ -63,5 +65,59 @@
         }
 
         #endregion
+
+        #region Depositos
+        public List<Deposito> ListarDepositos()
+        {
+            return aListaDepositos;
+        }
+
+        public Deposito BuscarDeposito(int pId)
+        {
+            foreach (Deposito unDeposito in aListaDepositos)
+            {
+                if (unDeposito.Id == pId)
+                {
+                    return unDeposito;
+                }
+            }
+            return null;
+        }
+
+        public bool AltaDeposito(Deposito pDeposito)
+        {
+            Deposito ComparoDeposito = BuscarDeposito(pDeposito.Id);
+            if (ComparoDeposito == null)
+            {
+                aListaDepositos.Add(pDeposito);
+                return true;
+            }
+            return false;
+        }
+
+        public bool BajaDeposito(int pId)
+        {
+            Deposito DepositoAEliminar = BuscarDeposito(pId);
+            if (DepositoAEliminar != null)
+            {
+                aListaDepositos.Remove(DepositoAEliminar);
+                return true;
+            }
+            return false;
+        }
+
+        public bool ModificarDeposito(int pId, string pNombre, string pDireccion)
+        {
+            Deposito DepositoAModificar = BuscarDeposito(pId);
+            if (DepositoAModificar != null)
+            {
+                DepositoAModificar.Nombre = pNombre;
+                DepositoAModificar.Direccion = pDireccion;
+                return true;
+            }
+            return false;
+        }
+        #endregion
+
     }
 }
