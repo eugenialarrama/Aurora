@@ -4,10 +4,10 @@ namespace Aurora.Dominio
 {
     public class Controladora
     {
-
         private static List<Cliente> aListaClientes = new List<Cliente>();
         private static List<Deposito> aListaDepositos = new List<Deposito>();
         private static List<TipoEquipamiento> aListaTiposEquipamiento = new List<TipoEquipamiento>();
+        private static List<UnidadEquipamiento> aListaUnidades = new List<UnidadEquipamiento>();
 
         #region Clientes
 
@@ -102,10 +102,17 @@ namespace Aurora.Dominio
             Deposito DepositoAEliminar = BuscarDeposito(pId);
             if (DepositoAEliminar != null)
             {
-                foreach (TipoEquipamiento unTipo in aListaTiposEquipamiento) // Verifica si hay algún tipo de equipamiento asociado al depósito antes de eliminarlo
-                //Antes de borrar, recorre los tipos.Si alguno usa ese depósito, devuelve false y no lo elimina
+                foreach (TipoEquipamiento unTipo in aListaTiposEquipamiento)
                 {
                     if (unTipo.Deposito.Id == pId)
+                    {
+                        return false;
+                    }
+                }
+                foreach (UnidadEquipamiento unaUnidad in aListaUnidades)
+                // Verifica si alguna unidad de equipamiento está asociada al depósito que se quiere eliminar
+                {
+                    if (unaUnidad.Deposito.Id == pId)
                     {
                         return false;
                     }
@@ -163,6 +170,14 @@ namespace Aurora.Dominio
             TipoEquipamiento TipoAEliminar = BuscarTipoEquipamiento(pId);
             if (TipoAEliminar != null)
             {
+                foreach (UnidadEquipamiento unaUnidad in aListaUnidades)
+                // Verifica si alguna unidad de equipamiento está asociada al tipo de equipamiento que se quiere eliminar
+                {
+                    if (unaUnidad.Tipo.Id == pId)
+                    {
+                        return false;
+                    }
+                }
                 aListaTiposEquipamiento.Remove(TipoAEliminar);
                 return true;
             }
@@ -185,5 +200,88 @@ namespace Aurora.Dominio
         }
 
         #endregion
+
+        #region Unidades
+
+        public List<UnidadEquipamiento> ListarUnidades()
+        {
+            return aListaUnidades;
+        }
+
+        public UnidadEquipamiento BuscarUnidad(int pId)
+        {
+            foreach (UnidadEquipamiento unaUnidad in aListaUnidades)
+            {
+                if (unaUnidad.Id == pId)
+                {
+                    return unaUnidad;
+                }
+            }
+            return null;
+        }
+
+        public UnidadEquipamiento BuscarUnidadPorIdentificador(string pIdentificador)
+        {
+            foreach (UnidadEquipamiento unaUnidad in aListaUnidades)
+            {
+                if (unaUnidad.Identificador == pIdentificador)
+                {
+                    return unaUnidad;
+                }
+            }
+            return null;
+        }
+
+        public bool AltaUnidad(UnidadEquipamiento pUnidad)
+        {
+            UnidadEquipamiento ComparoUnidad = BuscarUnidad(pUnidad.Id);
+            if (ComparoUnidad == null)
+            {
+                aListaUnidades.Add(pUnidad);
+                return true;
+            }
+            return false;
+        }
+
+        public bool BajaUnidad(int pId)
+        {
+            UnidadEquipamiento UnidadAEliminar = BuscarUnidad(pId);
+            if (UnidadAEliminar != null)
+            {
+                aListaUnidades.Remove(UnidadAEliminar);
+                return true;
+            }
+            return false;
+        }
+
+        public bool ModificarUnidad(int pId, string pIdentificador, string pEstado, TipoEquipamiento pTipo, Deposito pDeposito)
+        {
+            UnidadEquipamiento UnidadAModificar = BuscarUnidad(pId);
+            if (UnidadAModificar != null)
+            {
+                UnidadAModificar.Identificador = pIdentificador;
+                UnidadAModificar.Estado = pEstado;
+                UnidadAModificar.Tipo = pTipo;
+                UnidadAModificar.Deposito = pDeposito;
+                return true;
+            }
+            return false;
+        }
+        // Este método devuelve una lista de los posibles estados de las unidades de equipamiento
+        public List<string> ListarEstados()
+        {
+            List<string> Estados = new List<string>();
+            Estados.Add("Disponible");
+            Estados.Add("Reservado");
+            Estados.Add("En preparación");
+            Estados.Add("Alquilado");
+            Estados.Add("En mantenimiento");
+            Estados.Add("Fuera de servicio");
+            return Estados;
+        }
+
+
+        #endregion
+
     }
 }

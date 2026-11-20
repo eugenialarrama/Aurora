@@ -7,6 +7,7 @@ namespace Aurora.Pages.PageTipoEquipamiento
     public class EliminarModel : PageModel
     {
         public TipoEquipamiento tipo { get; set; }
+        public string Mensaje { get; set; } = "";
 
         public void OnGet(int id)
         {
@@ -19,9 +20,13 @@ namespace Aurora.Pages.PageTipoEquipamiento
             int Id = int.Parse(Request.Form["id"]);
 
             Controladora unaControladora = new Controladora();
-            unaControladora.BajaTipoEquipamiento(Id);
+            if (!unaControladora.BajaTipoEquipamiento(Id))
+            {
+                tipo = unaControladora.BuscarTipoEquipamiento(Id);
+                Mensaje = "No se puede eliminar el Tipo de Equipamiento porque tiene Unidades asignadas";
+                return Page();
+            }
             return Redirect("/PageTipoEquipamiento/Listar");
         }
     }
 }
-

@@ -1,0 +1,54 @@
+﻿@page
+@model Aurora.Pages.PageUnidadEquipamiento.ListarModel
+@{
+    ViewData["Title"] = "Listado de unidades de equipamiento";
+}
+<div>
+    <h1 class="display-4 text-center">Listado de Unidades de Equipamiento</h1>
+    <div class="row">
+        <div class="col text-right">
+            <a class="btn btn-success" asp-page="./Alta">Agregar</a>
+        </div>
+    </div>
+    <table class="table text-center">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Identificador</th>
+                <th>Estado</th>
+                <th>Tipo</th>
+                <th>Depósito</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Unidades != null && Model.Unidades.Any())
+            {
+                @foreach (Dominio.UnidadEquipamiento unaUnidad in Model.Unidades)
+                {
+                    <tr>
+                        <td>@unaUnidad.Id</td>
+                        <td>@unaUnidad.Identificador</td>
+                        <td>@unaUnidad.Estado</td>
+                        <td>@unaUnidad.Tipo.Nombre</td>
+                        <td>@unaUnidad.Deposito.Nombre</td>
+                        <td>
+                            <div>
+                                <a class="btn btn-primary" asp-page="./Modificar" asp-route-id="@unaUnidad.Id">Modificar</a>
+                                <a class="btn btn-danger" asp-page="./Eliminar" asp-route-id="@unaUnidad.Id">Eliminar</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-center">
+                        No hay unidades de equipamiento ingresadas
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

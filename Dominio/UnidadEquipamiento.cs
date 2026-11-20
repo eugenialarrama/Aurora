@@ -3,8 +3,8 @@
     public class UnidadEquipamiento
     {
         private int aId;
-        private string aIdentificador;  // número de serie o código de la unidad
-        private string aEstado;         // Disponible, Reservado, En preparación, Alquilado, En mantenimiento, Fuera de servicio
+        private string aIdentificador;  
+        private string aEstado; 
         private TipoEquipamiento aTipo;
         private Deposito aDeposito;
 

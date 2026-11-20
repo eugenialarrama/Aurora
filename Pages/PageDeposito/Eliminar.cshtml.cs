@@ -23,7 +23,7 @@ namespace Aurora.Pages.PageDeposito
                 if (!unaControladora.BajaDeposito(Id))
                 {
                     deposito = unaControladora.BuscarDeposito(Id);
-                    Mensaje = "No se puede eliminar el Depósito porque tiene Tipos de Equipamiento asignados";
+                    Mensaje = Mensaje = "No se puede eliminar el Depósito porque tiene Tipos de Equipamiento o Unidades asignados"; 
                     return Page();
                 }
                 return Redirect("/PageDeposito/Listar");
