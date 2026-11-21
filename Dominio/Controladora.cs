@@ -1,24 +1,31 @@
-﻿using System.Runtime.Intrinsics.X86;
+﻿using Aurora.Persistencia;
 
 namespace Aurora.Dominio
 {
     public class Controladora
     {
+        private PControladora Persistencia;
         private static List<Cliente> aListaClientes = new List<Cliente>();
         private static List<Deposito> aListaDepositos = new List<Deposito>();
         private static List<TipoEquipamiento> aListaTiposEquipamiento = new List<TipoEquipamiento>();
         private static List<UnidadEquipamiento> aListaUnidades = new List<UnidadEquipamiento>();
 
+        public Controladora()
+        {
+            Persistencia = new PControladora();
+        }
+
         #region Clientes
 
         public List<Cliente> ListarClientes()
         {
+            aListaClientes = Persistencia.ListaClientes();
             return aListaClientes;
         }
 
         public Cliente BuscarCliente(int pId)
         {
-            foreach (Cliente unCliente in aListaClientes)
+            foreach (Cliente unCliente in ListarClientes())
             {
                 if (unCliente.Id == pId)
                 {
@@ -33,13 +40,16 @@ namespace Aurora.Dominio
             Cliente ComparoCliente = BuscarCliente(pCliente.Id);
             if (ComparoCliente == null)
             {
-                aListaClientes.Add(pCliente);
-                return true;
+                if (Persistencia.AltaCliente(pCliente))
+                {
+                    aListaClientes.Add(pCliente);
+                    return true;
+                }
             }
             return false;
         }
 
-        public bool ModificarCliente(int pId, string pTipo, string pNombre, string pDocumento, string pTelefono, string pEmail,string pDireccion)
+        public bool ModificarCliente(int pId, string pTipo, string pNombre, string pDocumento, string pTelefono, string pEmail, string pDireccion)
         {
             Cliente ClienteAModificar = BuscarCliente(pId);
             if (ClienteAModificar != null)
@@ -50,7 +60,7 @@ namespace Aurora.Dominio
                 ClienteAModificar.Telefono = pTelefono;
                 ClienteAModificar.Email = pEmail;
                 ClienteAModificar.Direccion = pDireccion;
-                return true;
+                return Persistencia.ModificarCliente(ClienteAModificar);
             }
             return false;
         }
@@ -60,8 +70,11 @@ namespace Aurora.Dominio
             Cliente ClienteADesactivar = BuscarCliente(pId);
             if (ClienteADesactivar != null)
             {
-                ClienteADesactivar.Activo = false;
-                return true;
+                if (Persistencia.DesactivarCliente(pId))
+                {
+                    ClienteADesactivar.Activo = false;
+                    return true;
+                }
             }
             return false;
         }
@@ -69,14 +82,16 @@ namespace Aurora.Dominio
         #endregion
 
         #region Depositos
+
         public List<Deposito> ListarDepositos()
         {
+            aListaDepositos = Persistencia.ListaDepositos();
             return aListaDepositos;
         }
 
         public Deposito BuscarDeposito(int pId)
         {
-            foreach (Deposito unDeposito in aListaDepositos)
+            foreach (Deposito unDeposito in ListarDepositos())
             {
                 if (unDeposito.Id == pId)
                 {
@@ -91,8 +106,11 @@ namespace Aurora.Dominio
             Deposito ComparoDeposito = BuscarDeposito(pDeposito.Id);
             if (ComparoDeposito == null)
             {
-                aListaDepositos.Add(pDeposito);
-                return true;
+                if (Persistencia.AltaDeposito(pDeposito))
+                {
+                    aListaDepositos.Add(pDeposito);
+                    return true;
+                }
             }
             return false;
         }
@@ -102,26 +120,29 @@ namespace Aurora.Dominio
             Deposito DepositoAEliminar = BuscarDeposito(pId);
             if (DepositoAEliminar != null)
             {
-                foreach (TipoEquipamiento unTipo in aListaTiposEquipamiento)
+                foreach (TipoEquipamiento unTipo in ListarTiposEquipamiento())
                 {
                     if (unTipo.Deposito.Id == pId)
                     {
                         return false;
                     }
                 }
-                foreach (UnidadEquipamiento unaUnidad in aListaUnidades)
-                // Verifica si alguna unidad de equipamiento está asociada al depósito que se quiere eliminar
+                foreach (UnidadEquipamiento unaUnidad in ListarUnidades())
                 {
                     if (unaUnidad.Deposito.Id == pId)
                     {
                         return false;
                     }
                 }
-                aListaDepositos.Remove(DepositoAEliminar);
-                return true;
+                if (Persistencia.BajaDeposito(pId))
+                {
+                    aListaDepositos.Remove(DepositoAEliminar);
+                    return true;
+                }
             }
             return false;
         }
+
         public bool ModificarDeposito(int pId, string pNombre, string pDireccion)
         {
             Deposito DepositoAModificar = BuscarDeposito(pId);
@@ -129,22 +150,24 @@ namespace Aurora.Dominio
             {
                 DepositoAModificar.Nombre = pNombre;
                 DepositoAModificar.Direccion = pDireccion;
-                return true;
+                return Persistencia.ModificarDeposito(DepositoAModificar);
             }
             return false;
         }
+
         #endregion
 
         #region TiposEquipamiento
 
         public List<TipoEquipamiento> ListarTiposEquipamiento()
         {
+            aListaTiposEquipamiento = Persistencia.ListaTiposEquipamiento();
             return aListaTiposEquipamiento;
         }
 
         public TipoEquipamiento BuscarTipoEquipamiento(int pId)
         {
-            foreach (TipoEquipamiento unTipo in aListaTiposEquipamiento)
+            foreach (TipoEquipamiento unTipo in ListarTiposEquipamiento())
             {
                 if (unTipo.Id == pId)
                 {
@@ -159,8 +182,11 @@ namespace Aurora.Dominio
             TipoEquipamiento ComparoTipo = BuscarTipoEquipamiento(pTipo.Id);
             if (ComparoTipo == null)
             {
-                aListaTiposEquipamiento.Add(pTipo);
-                return true;
+                if (Persistencia.AltaTipoEquipamiento(pTipo))
+                {
+                    aListaTiposEquipamiento.Add(pTipo);
+                    return true;
+                }
             }
             return false;
         }
@@ -170,16 +196,18 @@ namespace Aurora.Dominio
             TipoEquipamiento TipoAEliminar = BuscarTipoEquipamiento(pId);
             if (TipoAEliminar != null)
             {
-                foreach (UnidadEquipamiento unaUnidad in aListaUnidades)
-                // Verifica si alguna unidad de equipamiento está asociada al tipo de equipamiento que se quiere eliminar
+                foreach (UnidadEquipamiento unaUnidad in ListarUnidades())
                 {
                     if (unaUnidad.Tipo.Id == pId)
                     {
                         return false;
                     }
                 }
-                aListaTiposEquipamiento.Remove(TipoAEliminar);
-                return true;
+                if (Persistencia.BajaTipoEquipamiento(pId))
+                {
+                    aListaTiposEquipamiento.Remove(TipoAEliminar);
+                    return true;
+                }
             }
             return false;
         }
@@ -194,7 +222,7 @@ namespace Aurora.Dominio
                 TipoAModificar.Caracteristicas = pCaracteristicas;
                 TipoAModificar.PrecioAlquiler = pPrecioAlquiler;
                 TipoAModificar.Deposito = pDeposito;
-                return true;
+                return Persistencia.ModificarTipoEquipamiento(TipoAModificar);
             }
             return false;
         }
@@ -203,14 +231,27 @@ namespace Aurora.Dominio
 
         #region Unidades
 
+        public List<string> ListarEstados()
+        {
+            List<string> Estados = new List<string>();
+            Estados.Add("Disponible");
+            Estados.Add("Reservado");
+            Estados.Add("En preparación");
+            Estados.Add("Alquilado");
+            Estados.Add("En mantenimiento");
+            Estados.Add("Fuera de servicio");
+            return Estados;
+        }
+
         public List<UnidadEquipamiento> ListarUnidades()
         {
+            aListaUnidades = Persistencia.ListaUnidades();
             return aListaUnidades;
         }
 
         public UnidadEquipamiento BuscarUnidad(int pId)
         {
-            foreach (UnidadEquipamiento unaUnidad in aListaUnidades)
+            foreach (UnidadEquipamiento unaUnidad in ListarUnidades())
             {
                 if (unaUnidad.Id == pId)
                 {
@@ -222,7 +263,7 @@ namespace Aurora.Dominio
 
         public UnidadEquipamiento BuscarUnidadPorIdentificador(string pIdentificador)
         {
-            foreach (UnidadEquipamiento unaUnidad in aListaUnidades)
+            foreach (UnidadEquipamiento unaUnidad in ListarUnidades())
             {
                 if (unaUnidad.Identificador == pIdentificador)
                 {
@@ -237,8 +278,11 @@ namespace Aurora.Dominio
             UnidadEquipamiento ComparoUnidad = BuscarUnidad(pUnidad.Id);
             if (ComparoUnidad == null)
             {
-                aListaUnidades.Add(pUnidad);
-                return true;
+                if (Persistencia.AltaUnidad(pUnidad))
+                {
+                    aListaUnidades.Add(pUnidad);
+                    return true;
+                }
             }
             return false;
         }
@@ -248,8 +292,11 @@ namespace Aurora.Dominio
             UnidadEquipamiento UnidadAEliminar = BuscarUnidad(pId);
             if (UnidadAEliminar != null)
             {
-                aListaUnidades.Remove(UnidadAEliminar);
-                return true;
+                if (Persistencia.BajaUnidad(pId))
+                {
+                    aListaUnidades.Remove(UnidadAEliminar);
+                    return true;
+                }
             }
             return false;
         }
@@ -263,25 +310,11 @@ namespace Aurora.Dominio
                 UnidadAModificar.Estado = pEstado;
                 UnidadAModificar.Tipo = pTipo;
                 UnidadAModificar.Deposito = pDeposito;
-                return true;
+                return Persistencia.ModificarUnidad(UnidadAModificar);
             }
             return false;
         }
-        // Este método devuelve una lista de los posibles estados de las unidades de equipamiento
-        public List<string> ListarEstados()
-        {
-            List<string> Estados = new List<string>();
-            Estados.Add("Disponible");
-            Estados.Add("Reservado");
-            Estados.Add("En preparación");
-            Estados.Add("Alquilado");
-            Estados.Add("En mantenimiento");
-            Estados.Add("Fuera de servicio");
-            return Estados;
-        }
-
 
         #endregion
-
     }
 }
