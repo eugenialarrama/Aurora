@@ -62,7 +62,29 @@ namespace Aurora.Persistencia
 
                 return Conexion.Ejecutar(sql);
             }
+        public Cliente Buscar(int pId)
+        {
+            string sql = "SELECT id, tipo, nombre, documento, telefono, email, direccion, activo FROM Cliente WHERE id = " + pId.ToString();
+
+            DataSet datos = Conexion.Consultar(sql);
+
+            foreach (DataRow fila in datos.Tables[0].Rows)
+            {
+                Cliente unCliente = new Cliente(
+                    int.Parse(fila[0].ToString()),
+                    fila[1].ToString(),
+                    fila[2].ToString(),
+                    fila[3].ToString(),
+                    fila[4].ToString(),
+                    fila[5].ToString(),
+                    fila[6].ToString()
+                    );
+                unCliente.Activo = bool.Parse(fila[7].ToString());
+                return unCliente;
+            }
+            return null;
         }
+    }
     }
 
 

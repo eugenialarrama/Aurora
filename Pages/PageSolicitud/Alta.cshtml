@@ -1,0 +1,126 @@
+﻿@page
+@model Aurora.Pages.PageSolicitud.AltaModel
+@{
+    ViewData["Title"] = "Agregar solicitud";
+}
+<div class="text-left">
+    <h1 class="display-4 text-center">Agregar una Solicitud de Alquiler</h1>
+    <hr />
+    <form method="post">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="idCliente">Cliente:</label>
+                    <select class="form-control" id="idCliente" asp-for="idCliente">
+                        <option value="">Seleccione un Cliente</option>
+                        @foreach (Dominio.Cliente unCliente in Model.Clientes)
+                        {
+                            if (unCliente.Activo)
+                            {
+                                <option value="@unCliente.Id">@unCliente.Nombre</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <hr />
+                <h5>Datos del evento</h5>
+                <div class="form-group">
+                    <label for="nombre">Nombre del evento:</label>
+                    <input class="form-control" type="text" id="nombre" asp-for="nombre" />
+                </div>
+                <div class="form-group">
+                    <label for="fecha">Fecha:</label>
+                    <input class="form-control" type="date" id="fecha" asp-for="fecha" />
+                </div>
+                <div class="form-group">
+                    <label for="ubicacion">Ubicación:</label>
+                    <input class="form-control" type="text" id="ubicacion" asp-for="ubicacion" />
+                </div>
+                <div class="form-group">
+                    <label for="horaInicio">Hora de inicio:</label>
+                    <input class="form-control" type="time" id="horaInicio" asp-for="horaInicio" />
+                </div>
+                <div class="form-group">
+                    <label for="horaFin">Hora de fin:</label>
+                    <input class="form-control" type="time" id="horaFin" asp-for="horaFin" />
+                </div>
+                <div class="form-group">
+                    <label for="asistentes">Cantidad estimada de asistentes:</label>
+                    <input class="form-control" type="number" id="asistentes" asp-for="asistentes" />
+                </div>
+            </div>
+        </div>
+        <hr />
+        <h5>Equipamiento solicitado</h5>
+        <div class="row">
+            <div class="col-sm-5">
+                <div class="form-group">
+                    <label for="idTipo">Tipo de equipamiento:</label>
+                    <select class="form-control" id="idTipo" asp-for="idTipo">
+                        <option value="">Seleccione un Tipo</option>
+                        @foreach (Dominio.TipoEquipamiento unTipo in Model.Tipos)
+                        {
+                            <option value="@unTipo.Id">@unTipo.Nombre (@Model.Disponibles(unTipo.Id) disponibles)</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="Cantidad">Cantidad:</label>
+                    <input class="form-control" type="number" id="Cantidad" asp-for="Cantidad" />
+                </div>
+            </div>
+            <div class="col-sm-2" style="margin-top: 24px;">
+                <button class="btn btn-info" type="submit" asp-page-handler="AgregarLinea">Agregar línea</button>
+            </div>
+        </div>
+        <table class="table text-center">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tipo de equipamiento</th>
+                    <th>Cantidad</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Lineas != null && Model.Lineas.Any())
+                {
+                    @foreach (Dominio.LineaSolicitud unaLinea in Model.Lineas)
+                    {
+                        <tr>
+                            <td>@unaLinea.Id</td>
+                            <td>@unaLinea.Tipo.Nombre</td>
+                            <td>@unaLinea.Cantidad</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" type="submit" asp-page-handler="QuitarLinea" asp-route-id="@unaLinea.Id">Quitar</button>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4" class="text-center">No hay líneas ingresadas</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <hr />
+        <div class="row">
+            <div class="mt-2">
+                <button class="btn btn-success" type="submit" asp-page-handler="Agregar">Agregar</button>
+                <a class="btn btn-warning" asp-page="./Listar">Volver</a>
+            </div>
+        </div>
+    </form>
+
+    @if (!string.IsNullOrEmpty(Model.Mensaje))
+    {
+        <br />
+        <div class="alert alert-danger" role="alert">
+            @Model.Mensaje
+        </div>
+    }
+</div>

@@ -79,5 +79,36 @@ namespace Aurora.Persistencia
             return new PUnidadEquipamiento().Modificar(mUnidad);
         }
         #endregion
+
+        #region "Solicitudes"
+        public List<SolicitudAlquiler> ListaSolicitudes()
+        {
+            return new PSolicitud().ListaSolicitudes();
+        }
+        public bool AltaEvento(Evento mEvento)
+        {
+            return new PEvento().Alta(mEvento);
+        }
+        public bool AltaSolicitud(SolicitudAlquiler mSolicitud)
+        {
+            return new PSolicitud().Alta(mSolicitud);
+        }
+        public int ProximoEventoId()
+        {
+            return new PEvento().ProximoId();
+        }
+        public int ProximoSolicitudId()
+        {
+            return new PSolicitud().ProximoId();
+        }
+        public int ProximoLineaSolicitudId()
+        {
+            return new PSolicitud().ProximoIdLinea();
+        }
+        public bool CambiarEstadoSolicitud(int pId, string pEstado)
+        {
+            return new PSolicitud().CambiarEstado(pId, pEstado);
+        }
+        #endregion
     }
 }

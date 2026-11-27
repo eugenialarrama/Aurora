@@ -9,14 +9,15 @@ namespace Aurora.Persistencia
             private static string baseDatos = "Aurora";
             private static string cadenaConexion = "Data Source=" + source +
                 ";Initial Catalog=" + baseDatos + ";Integrated Security=SSPI; Encrypt=False";
+            private static string formateoFecha = "set dateformat dmy ";
 
-            public bool Ejecutar(string sql)
+        public bool Ejecutar(string sql)
             {
                 try
                 {
-                    SqlConnection conexion = new SqlConnection(cadenaConexion);
-                    SqlCommand comando = new SqlCommand(sql, conexion);
-                    conexion.Open();
+                SqlConnection conexion = new SqlConnection(cadenaConexion);
+                SqlCommand comando = new SqlCommand(formateoFecha + sql, conexion);
+                conexion.Open();
                     comando.ExecuteNonQuery();
                     comando.Dispose();
                     conexion.Close();
@@ -32,7 +33,7 @@ namespace Aurora.Persistencia
                 try
                 {
                     SqlConnection conexion = new SqlConnection(cadenaConexion);
-                    SqlDataAdapter adaptador = new SqlDataAdapter(sql, conexion);
+                    SqlDataAdapter adaptador = new SqlDataAdapter(formateoFecha + sql, conexion);
                     DataSet resultado = new DataSet();
                     adaptador.Fill(resultado);
                     adaptador.Dispose();

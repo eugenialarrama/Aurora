@@ -9,10 +9,20 @@ namespace Aurora.Dominio
         private static List<Deposito> aListaDepositos = new List<Deposito>();
         private static List<TipoEquipamiento> aListaTiposEquipamiento = new List<TipoEquipamiento>();
         private static List<UnidadEquipamiento> aListaUnidades = new List<UnidadEquipamiento>();
+        private static List<SolicitudAlquiler> aListaSolicitudes = new List<SolicitudAlquiler>();
+        private static List<LineaSolicitud> aListaLineasSolicitud = new List<LineaSolicitud>();
 
         public Controladora()
         {
             Persistencia = new PControladora();
+        }
+        public void CargarListas()
+        {
+            ListarClientes();
+            ListarDepositos();
+            ListarTiposEquipamiento();
+            ListarUnidades();
+            ListarSolicitudes();
         }
 
         #region Clientes
@@ -25,7 +35,7 @@ namespace Aurora.Dominio
 
         public Cliente BuscarCliente(int pId)
         {
-            foreach (Cliente unCliente in ListarClientes())
+            foreach (Cliente unCliente in aListaClientes)
             {
                 if (unCliente.Id == pId)
                 {
@@ -91,7 +101,7 @@ namespace Aurora.Dominio
 
         public Deposito BuscarDeposito(int pId)
         {
-            foreach (Deposito unDeposito in ListarDepositos())
+            foreach (Deposito unDeposito in aListaDepositos)
             {
                 if (unDeposito.Id == pId)
                 {
@@ -167,7 +177,7 @@ namespace Aurora.Dominio
 
         public TipoEquipamiento BuscarTipoEquipamiento(int pId)
         {
-            foreach (TipoEquipamiento unTipo in ListarTiposEquipamiento())
+            foreach (TipoEquipamiento unTipo in aListaTiposEquipamiento)
             {
                 if (unTipo.Id == pId)
                 {
@@ -251,7 +261,7 @@ namespace Aurora.Dominio
 
         public UnidadEquipamiento BuscarUnidad(int pId)
         {
-            foreach (UnidadEquipamiento unaUnidad in ListarUnidades())
+            foreach (UnidadEquipamiento unaUnidad in aListaUnidades)
             {
                 if (unaUnidad.Id == pId)
                 {
@@ -263,7 +273,7 @@ namespace Aurora.Dominio
 
         public UnidadEquipamiento BuscarUnidadPorIdentificador(string pIdentificador)
         {
-            foreach (UnidadEquipamiento unaUnidad in ListarUnidades())
+            foreach (UnidadEquipamiento unaUnidad in aListaUnidades)
             {
                 if (unaUnidad.Identificador == pIdentificador)
                 {
@@ -313,6 +323,178 @@ namespace Aurora.Dominio
                 return Persistencia.ModificarUnidad(UnidadAModificar);
             }
             return false;
+        }
+
+        #endregion
+
+        #region Solicitudes
+
+        public int ProximoIdEvento()
+        {
+            return Persistencia.ProximoEventoId();
+        }
+
+        public int ProximoIdSolicitud()
+        {
+            return Persistencia.ProximoSolicitudId();
+        }
+
+        public List<SolicitudAlquiler> ListarSolicitudes()
+        {
+            aListaSolicitudes = Persistencia.ListaSolicitudes();
+            return aListaSolicitudes;
+        }
+
+        public SolicitudAlquiler BuscarSolicitud(int pId)
+        {
+            foreach (SolicitudAlquiler unaSolicitud in aListaSolicitudes)
+            {
+                if (unaSolicitud.Id == pId)
+                {
+                    return unaSolicitud;
+                }
+            }
+            return null;
+        }
+
+        public bool AltaSolicitud(SolicitudAlquiler pSolicitud)
+
+        {
+            SolicitudAlquiler ComparoSolicitud = BuscarSolicitud(pSolicitud.Id);
+            if (ComparoSolicitud == null)
+            {
+                if (Persistencia.AltaEvento(pSolicitud.Evento))
+                {
+                    if (Persistencia.AltaSolicitud(pSolicitud))
+                    {
+                        aListaSolicitudes.Add(pSolicitud);
+                        LimpiarLineasSolicitud();
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        public int ProximoIdLinea()
+        {
+            return Persistencia.ProximoLineaSolicitudId();
+        }
+
+        public List<LineaSolicitud> ListarLineasSolicitud()
+        {
+            return aListaLineasSolicitud;
+        }
+
+        public bool AltaLineaSolicitud(LineaSolicitud pLinea)
+        {
+            aListaLineasSolicitud.Add(pLinea);
+            return true;
+        }
+
+        public bool QuitarLineaSolicitud(int pId)
+        {
+            foreach (LineaSolicitud unaLinea in aListaLineasSolicitud)
+            {
+                if (unaLinea.Id == pId)
+                {
+                    aListaLineasSolicitud.Remove(unaLinea);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void LimpiarLineasSolicitud()
+        {
+            aListaLineasSolicitud.Clear();
+        }
+        public bool CambiarEstadoSolicitud(int pId, string pEstado)
+        {
+            SolicitudAlquiler unaSolicitud = BuscarSolicitud(pId);
+            if (unaSolicitud != null)
+            {
+                bool Permitido = false;
+
+                if (unaSolicitud.Estado == "Pendiente")
+                {
+                    if (pEstado == "Aceptada" || pEstado == "Rechazada" || pEstado == "Cancelada")
+                    {
+                        Permitido = true;
+                    }
+                }
+                if (unaSolicitud.Estado == "Aceptada")
+                {
+                    if (pEstado == "Cancelada")
+                    {
+                        Permitido = true;
+                    }
+                }
+
+                if (Permitido)
+                {
+                    if (Persistencia.CambiarEstadoSolicitud(pId, pEstado))
+                    {
+                        unaSolicitud.Estado = pEstado;
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        public int CantidadDisponible(int pIdTipo)
+        {
+            int Cantidad = 0;
+            foreach (UnidadEquipamiento unaUnidad in ListarUnidades())
+            {
+                if (unaUnidad.Tipo.Id == pIdTipo && unaUnidad.Estado == "Disponible")
+                {
+                    Cantidad += 1;
+                }
+            }
+            return Cantidad;
+        }
+
+        public int CantidadComprometida(int pIdTipo, SolicitudAlquiler pSolicitud)
+        {
+            int Cantidad = 0;
+            foreach (SolicitudAlquiler otraSolicitud in aListaSolicitudes)
+            {
+                if (otraSolicitud.Id != pSolicitud.Id && otraSolicitud.Estado == "Aceptada")
+                {
+                    if (otraSolicitud.Evento.Fecha.Date == pSolicitud.Evento.Fecha.Date)
+                    {
+                        if (pSolicitud.Evento.HoraInicio < otraSolicitud.Evento.HoraFin
+                            && otraSolicitud.Evento.HoraInicio < pSolicitud.Evento.HoraFin)
+                        {
+                            foreach (LineaSolicitud unaLinea in otraSolicitud.Lineas)
+                            {
+                                if (unaLinea.Tipo.Id == pIdTipo)
+                                {
+                                    Cantidad += unaLinea.Cantidad;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return Cantidad;
+        }
+
+        public string VerificarDisponibilidad(SolicitudAlquiler pSolicitud)
+        {
+            foreach (LineaSolicitud unaLinea in pSolicitud.Lineas)
+            {
+                int Libres = CantidadDisponible(unaLinea.Tipo.Id) - CantidadComprometida(unaLinea.Tipo.Id, pSolicitud);
+                if (Libres < unaLinea.Cantidad)
+                {
+                    if (Libres < 0)
+                    {
+                        Libres = 0;
+                    }
+                    return "No hay disponibilidad de " + unaLinea.Tipo.Nombre + ": se piden " + unaLinea.Cantidad + " y hay " + Libres + " para esa fecha y horario.";
+                }
+            }
+            return "";
         }
 
         #endregion

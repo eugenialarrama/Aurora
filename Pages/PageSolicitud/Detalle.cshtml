@@ -1,0 +1,75 @@
+﻿@page
+@model Aurora.Pages.PageSolicitud.DetalleModel
+@{
+    ViewData["Title"] = "Detalle Solicitud";
+}
+<div class="text-left">
+    <h1 class="display-4 text-center">Detalle de la Solicitud</h1>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">Número de solicitud</dt>
+        <dd class="col-sm-9">@Model.solicitud.Id</dd>
+        <dt class="col-sm-3">Fecha de solicitud</dt>
+        <dd class="col-sm-9">@Model.solicitud.Fecha.ToShortDateString()</dd>
+        <dt class="col-sm-3">Estado</dt>
+        <dd class="col-sm-9">@Model.solicitud.Estado</dd>
+        <dt class="col-sm-3">Cliente</dt>
+        <dd class="col-sm-9">@Model.solicitud.Cliente.Nombre</dd>
+        <dt class="col-sm-3">Teléfono</dt>
+        <dd class="col-sm-9">@Model.solicitud.Cliente.Telefono</dd>
+    </dl>
+    <hr />
+    <h5>Datos del evento</h5>
+    <dl class="row">
+        <dt class="col-sm-3">Nombre</dt>
+        <dd class="col-sm-9">@Model.solicitud.Evento.Nombre</dd>
+        <dt class="col-sm-3">Fecha</dt>
+        <dd class="col-sm-9">@Model.solicitud.Evento.Fecha.ToShortDateString()</dd>
+        <dt class="col-sm-3">Ubicación</dt>
+        <dd class="col-sm-9">@Model.solicitud.Evento.Ubicacion</dd>
+        <dt class="col-sm-3">Hora de inicio</dt>
+        <dd class="col-sm-9">@Model.solicitud.Evento.HoraInicio</dd>
+        <dt class="col-sm-3">Hora de fin</dt>
+        <dd class="col-sm-9">@Model.solicitud.Evento.HoraFin</dd>
+        <dt class="col-sm-3">Asistentes</dt>
+        <dd class="col-sm-9">@Model.solicitud.Evento.CantAsistentes</dd>
+    </dl>
+    <hr />
+    <h5>Equipamiento solicitado</h5>
+    <table class="table text-center">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tipo de equipamiento</th>
+                <th>Precio de alquiler</th>
+                <th>Cantidad</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.solicitud.Lineas != null && Model.solicitud.Lineas.Any())
+            {
+                @foreach (Dominio.LineaSolicitud unaLinea in Model.solicitud.Lineas)
+                {
+                    <tr>
+                        <td>@unaLinea.Id</td>
+                        <td>@unaLinea.Tipo.Nombre</td>
+                        <td>@unaLinea.Tipo.PrecioAlquiler</td>
+                        <td>@unaLinea.Cantidad</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4" class="text-center">No hay líneas ingresadas</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <hr />
+    <div class="row">
+        <div class="mt-2">
+            <a class="btn btn-warning" asp-page="./Listar">Volver</a>
+        </div>
+    </div>
+</div>

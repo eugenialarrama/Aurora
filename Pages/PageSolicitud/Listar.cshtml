@@ -1,0 +1,71 @@
+﻿@page
+@model Aurora.Pages.PageSolicitud.ListarModel
+@{
+    ViewData["Title"] = "Listado de solicitudes de Alquiler";
+}
+<div>
+    <h1 class="display-4 text-center">Listado de Solicitudes de Alquiler</h1>
+    <div class="row">
+        <div class="col text-right">
+            <a class="btn btn-success" asp-page="./Alta">Agregar</a>
+        </div>
+    </div>
+    <form method="post">
+        <table class="table text-center">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Fecha de solicitud</th>
+                    <th>Cliente</th>
+                    <th>Evento</th>
+                    <th>Fecha del evento</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Solicitudes != null && Model.Solicitudes.Any())
+                {
+                    @foreach (Dominio.SolicitudAlquiler unaSolicitud in Model.Solicitudes)
+                    {
+                        <tr>
+                            <td>@unaSolicitud.Id</td>
+                            <td>@unaSolicitud.Fecha.ToShortDateString()</td>
+                            <td>@unaSolicitud.Cliente.Nombre</td>
+                            <td>@unaSolicitud.Evento.Nombre</td>
+                            <td>@unaSolicitud.Evento.Fecha.ToShortDateString()</td>
+                            <td>@unaSolicitud.Estado</td>
+                            <td>
+                                <a class="btn btn-primary btn-sm" asp-page="./Detalle" asp-route-id="@unaSolicitud.Id">Detalle</a>
+                                @if (unaSolicitud.Estado == "Pendiente")
+                                {
+                                    <button class="btn btn-success btn-sm" type="submit" asp-page-handler="Aceptar" asp-route-id="@unaSolicitud.Id">Aceptar</button>
+                                    <button class="btn btn-warning btn-sm" type="submit" asp-page-handler="Rechazar" asp-route-id="@unaSolicitud.Id">Rechazar</button>
+                                }
+                                @if (unaSolicitud.Estado == "Pendiente" || unaSolicitud.Estado == "Aceptada")
+                                {
+                                    <button class="btn btn-danger btn-sm" type="submit" asp-page-handler="Cancelar" asp-route-id="@unaSolicitud.Id">Cancelar</button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center">
+                            No hay Solicitudes ingresadas
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </form>
+
+    @if (!string.IsNullOrEmpty(Model.Mensaje))
+    {
+        <div class="alert alert-danger" role="alert">
+            @Model.Mensaje
+        </div>
+    }
+</div>
